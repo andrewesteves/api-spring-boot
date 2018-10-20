@@ -98,4 +98,10 @@ public class ProductController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(path = "search/{title}", method = RequestMethod.GET)
+    public ResponseEntity<List<Product>> search(@PathVariable String title) {
+        List<Product> products = productRespository.findByTitle(title);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
 }
