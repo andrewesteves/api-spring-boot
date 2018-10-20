@@ -44,4 +44,58 @@ public class ProductController {
         productRespository.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @RequestMapping(path = "{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Void> update(@PathVariable String id, @RequestBody @Valid ProductRequest request) {
+        Optional<Product> product = productRespository.findById(id);
+        if(!product.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        product.get().setTitle(request.getTitle());
+        product.get().setDescription(request.getDescription());
+        product.get().setQuantity(request.getQuantity());
+        product.get().setPrice(request.getPrice());
+        productRespository.save(product.get());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<Void> edit(@PathVariable String id, @RequestBody @Valid ProductRequest request) {
+        Optional<Product> product = productRespository.findById(id);
+        if(!product.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if(request.getTitle() != null) {
+            product.get().setTitle(request.getTitle());
+        }
+
+        if(request.getDescription() != null) {
+            product.get().setDescription(request.getDescription());
+        }
+
+        if(request.getQuantity() > 0) {
+            product.get().setQuantity(request.getQuantity());
+        }
+
+        if(request.getPrice() > 0) {
+            product.get().setPrice(request.getPrice());
+        }
+
+        productRespository.save(product.get());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> destroy(@PathVariable String id) {
+        Optional<Product> product = productRespository.findById(id);
+        if(!product.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        productRespository.delete(product.get());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
