@@ -2,14 +2,13 @@ package com.digitalnativa.apiproducts.controller;
 
 import com.digitalnativa.apiproducts.entity.Product;
 import com.digitalnativa.apiproducts.repository.ProductRepository;
+import com.digitalnativa.apiproducts.vo.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,5 +32,16 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(product.get(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> store(@RequestBody @Valid ProductRequest request) {
+        Product product = new Product();
+        product.setTitle(request.getTitle());
+        product.setDescription(request.getDescription());
+        product.setQuantity(request.getQuantity());
+        product.setPrice(request.getPrice());
+        productRespository.save(product);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
