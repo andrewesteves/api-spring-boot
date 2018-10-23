@@ -19,12 +19,23 @@ public class ProductController {
     @Autowired
     private ProductRepository productRespository;
 
+    /**
+     * Consulta por todos os produtos cadastrados.
+     *
+     * @return ResponseEntity<List<Product>>
+     */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Product>> index() {
         List<Product> products = productRespository.findAll();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    /**
+     * Consulta por um produto específico de acordo com o id.
+     *
+     * @param id
+     * @return ResponseEntity<Product>
+     */
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     public ResponseEntity<Product> show(@PathVariable String id) {
         Optional<Product> product = productRespository.findById(id);
@@ -34,10 +45,16 @@ public class ProductController {
         return new ResponseEntity<>(product.get(), HttpStatus.OK);
     }
 
+    /**
+     * Cadastrar um novo produto.
+     *
+     * @param request
+     * @return ResponseEntity<Void>
+     */
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Void> store(@RequestBody @Valid ProductRequest request) {
         Product product = new Product();
-        product.setTitle(request.getTitle());
+        product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setQuantity(request.getQuantity());
         product.setPrice(request.getPrice());
@@ -45,13 +62,20 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * Atualizar um produto.
+     *
+     * @param id
+     * @param request
+     * @return ResponseEntity<Void>
+     */
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> update(@PathVariable String id, @RequestBody @Valid ProductRequest request) {
         Optional<Product> product = productRespository.findById(id);
         if(!product.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        product.get().setTitle(request.getTitle());
+        product.get().setName(request.getName());
         product.get().setDescription(request.getDescription());
         product.get().setQuantity(request.getQuantity());
         product.get().setPrice(request.getPrice());
@@ -59,6 +83,13 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Atualizar partes de um produto.
+     *
+     * @param id
+     * @param request
+     * @return ResponseEntity<Void>
+     */
     @RequestMapping(path = "{id}", method = RequestMethod.PATCH)
     public ResponseEntity<Void> edit(@PathVariable String id, @RequestBody @Valid ProductRequest request) {
         Optional<Product> product = productRespository.findById(id);
@@ -66,8 +97,8 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if(request.getTitle() != null) {
-            product.get().setTitle(request.getTitle());
+        if(request.getName() != null) {
+            product.get().setName(request.getName());
         }
 
         if(request.getDescription() != null) {
@@ -87,6 +118,12 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Remover um produto cadastrado.
+     *
+     * @param id
+     * @return ResponseEntity<Void>
+     */
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> destroy(@PathVariable String id) {
         Optional<Product> product = productRespository.findById(id);
@@ -99,9 +136,15 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "search/{title}", method = RequestMethod.GET)
-    public ResponseEntity<List<Product>> search(@PathVariable String title) {
-        List<Product> products = productRespository.findByTitle(title);
+    /**
+     * Consultar um produto pelo nome.
+     *
+     * @param name
+     * @return ResponseEntity<List<Product>>
+     */
+    @RequestMapping(path = "search/{name}", method = RequestMethod.GET)
+    public ResponseEntity<List<Product>> search(@PathVariable String name) {
+        List<Product> products = productRespository.findByName(name);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 }
